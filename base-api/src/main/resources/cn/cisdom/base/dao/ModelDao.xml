@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.cisdom.base.dao.ModelDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cn.cisdom.base.entity.ModelEntity" id="modelMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="modelId" column="model_id"/>
+        <result property="title" column="title"/>
+        <result property="allotDomain" column="allot_domain"/>
+        <result property="bindDomain" column="bind_domain"/>
+        <result property="icpNum" column="icp_num"/>
+        <result property="policeNum" column="police_num"/>
+        <result property="startTime" column="start_time"/>
+        <result property="expireTime" column="expire_time"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="cn.cisdom.base.entity.ModelEntity">
+		select id,user_id,model_id,title,allot_domain,bind_domain,icp_num,police_num,start_time,expire_time,status from tb_model where id = #{value}
+	</select>
+
+    <select id="queryList" resultType="cn.cisdom.base.entity.ModelEntity">
+        select id,user_id,model_id,title,allot_domain,bind_domain,icp_num,police_num,start_time,expire_time,status from
+        tb_model where user_id = #{userId}
+        <if test="status != null">
+            <choose>
+                <when test="status==2">
+                    and status = 0 and (TO_SECONDS(expire_time) - TO_SECONDS(now())) <![CDATA[ < ]]> 2592000
+                </when>
+                <otherwise>
+                    and status = ${status}
+                </otherwise>
+            </choose>
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by status asc ,start_time desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(id) from tb_model
+	</select>
+
+    <insert id="save" parameterType="cn.cisdom.base.entity.ModelEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into tb_model
+		(
+			`user_id`, 
+			`model_id`, 
+			`title`, 
+			`allot_domain`, 
+			`bind_domain`, 
+			`icp_num`, 
+			`police_num`, 
+			`start_time`, 
+			`expire_time`, 
+			`status`
+		)
+		values
+		(
+			#{userId}, 
+			#{modelId}, 
+			#{title}, 
+			#{allotDomain}, 
+			#{bindDomain}, 
+			#{icpNum}, 
+			#{policeNum}, 
+			#{startTime}, 
+			#{expireTime}, 
+			#{status}
+		)
+	</insert>
+
+    <update id="update" parameterType="cn.cisdom.base.entity.ModelEntity">
+        update tb_model
+        <set>
+            <if test="userId != null">`user_id` = #{userId},</if>
+            <if test="modelId != null">`model_id` = #{modelId},</if>
+            <if test="title != null">`title` = #{title},</if>
+            <if test="allotDomain != null">`allot_domain` = #{allotDomain},</if>
+            <if test="bindDomain != null">`bind_domain` = #{bindDomain},</if>
+            <if test="icpNum != null">`icp_num` = #{icpNum},</if>
+            <if test="policeNum != null">`police_num` = #{policeNum},</if>
+            <if test="startTime != null">`start_time` = #{startTime},</if>
+            <if test="expireTime != null">`expire_time` = #{expireTime},</if>
+            <if test="status != null">`status` = #{status}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from tb_model where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from tb_model where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

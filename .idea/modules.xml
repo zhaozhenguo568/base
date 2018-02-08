@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/base-api/base-api.iml" filepath="$PROJECT_DIR$/base-api/base-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/base-common/base-common.iml" filepath="$PROJECT_DIR$/base-common/base-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/base-shiro/base-shiro.iml" filepath="$PROJECT_DIR$/base-shiro/base-shiro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/base-web/base-web.iml" filepath="$PROJECT_DIR$/base-web/base-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/baseweb.iml" filepath="$PROJECT_DIR$/baseweb.iml" />
+    </modules>
+  </component>
+</project>

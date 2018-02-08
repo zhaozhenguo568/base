@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.cisdom.base.dao.BaseinfoDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cn.cisdom.base.entity.BaseinfoEntity" id="baseinfoMap">
+        <result property="id" column="id"/>
+        <result property="umId" column="um_id"/>
+        <result property="title" column="title"/>
+        <result property="logoPic" column="logo_pic"/>
+        <result property="contactPhone" column="contact_phone"/>
+        <result property="email" column="email"/>
+        <result property="address" column="address"/>
+        <result property="qrcode" column="qrcode"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="cn.cisdom.base.entity.BaseinfoEntity">
+		select id,um_id,title,logo_pic,contact_phone,email,address,qrcode,longitude,latitude from tb_baseinfo where id = #{value}
+	</select>
+
+    <select id="queryList" resultType="cn.cisdom.base.entity.BaseinfoEntity">
+        select id,um_id,title,logo_pic,contact_phone,email,address,qrcode,longitude,latitude from tb_baseinfo
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(id) from tb_baseinfo
+	</select>
+
+    <insert id="save" parameterType="cn.cisdom.base.entity.BaseinfoEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into tb_baseinfo
+		(
+			`um_id`, 
+			`title`, 
+			`logo_pic`, 
+			`contact_phone`, 
+			`email`, 
+			`address`, 
+			`qrcode`, 
+			`longitude`, 
+			`latitude`
+		)
+		values
+		(
+			#{umId}, 
+			#{title}, 
+			#{logoPic}, 
+			#{contactPhone}, 
+			#{email}, 
+			#{address}, 
+			#{qrcode}, 
+			#{longitude}, 
+			#{latitude}
+		)
+	</insert>
+
+    <update id="update" parameterType="cn.cisdom.base.entity.BaseinfoEntity">
+        update tb_baseinfo
+        <set>
+            <if test="umId != null">`um_id` = #{umId},</if>
+            <if test="title != null">`title` = #{title},</if>
+            <if test="logoPic != null">`logo_pic` = #{logoPic},</if>
+            <if test="contactPhone != null">`contact_phone` = #{contactPhone},</if>
+            <if test="email != null">`email` = #{email},</if>
+            <if test="address != null">`address` = #{address},</if>
+            <if test="qrcode != null">`qrcode` = #{qrcode},</if>
+            <if test="longitude != null">`longitude` = #{longitude},</if>
+            <if test="latitude != null">`latitude` = #{latitude}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from tb_baseinfo where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from tb_baseinfo where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

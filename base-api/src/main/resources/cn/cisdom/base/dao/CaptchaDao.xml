@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.cisdom.base.dao.CaptchaDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cn.cisdom.base.entity.CaptchaEntity" id="captchaMap">
+        <result property="id" column="id"/>
+        <result property="captcha" column="captcha"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="cn.cisdom.base.entity.CaptchaEntity">
+		select id,captcha,create_time from tb_captcha where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="cn.cisdom.base.entity.CaptchaEntity">
+		select id,captcha,create_time from tb_captcha
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(id) from tb_captcha
+	</select>
+	 
+	<insert id="save" parameterType="cn.cisdom.base.entity.CaptchaEntity">
+		insert into tb_captcha
+		(
+			`id`, 
+			`captcha`, 
+			`create_time`
+		)
+		values
+		(
+			#{id}, 
+			#{captcha}, 
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="cn.cisdom.base.entity.CaptchaEntity">
+		update tb_captcha 
+		<set>
+			<if test="captcha != null">`captcha` = #{captcha}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from tb_captcha where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from tb_captcha where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="exists" resultType="int">
+		select EXISTS (select id from tb_captcha where captcha =  #{value})
+	</select>
+
+	<delete id="deleteByCaptcha">
+		delete from tb_captcha where captcha = #{value}
+	</delete>
+
+</mapper>

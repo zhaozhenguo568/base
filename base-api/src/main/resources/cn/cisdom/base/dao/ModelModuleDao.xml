@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.cisdom.base.dao.ModelModuleDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cn.cisdom.base.entity.ModelModuleEntity" id="modelModuleMap">
+        <result property="id" column="id"/>
+        <result property="umId" column="um_id"/>
+        <result property="title" column="title"/>
+        <result property="subtitle" column="subtitle"/>
+        <result property="type" column="type"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="level" column="level"/>
+        <result property="mPic" column="m_pic"/>
+        <result property="pcPic" column="pc_pic"/>
+        <result property="sort" column="sort"/>
+        <result property="isClass" column="is_class"/>
+        <result property="isShow" column="is_show"/>
+        <result property="indexShow" column="index_show"/>
+        <result property="openType" column="open_type"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="cn.cisdom.base.entity.ModelModuleEntity">
+		select id,umId,title,subtitle,`type`,parentId,`level`,m_pic,pc_pic,sort,is_class,is_show,index_show,open_type from tb_model_module where id = #{value}
+	</select>
+
+    <select id="queryList" resultType="cn.cisdom.base.entity.ModelModuleEntity">
+        select id,umId,title,subtitle,`type`,parentId,`level`,m_pic,pc_pic,sort,is_class,is_show,index_show,open_type
+        from tb_model_module where um_id = #{id}
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by sort asc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(id) from tb_model_module
+	</select>
+
+    <insert id="save" parameterType="cn.cisdom.base.entity.ModelModuleEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into tb_model_module
+		(
+			`um_id`, 
+			`title`, 
+			`subtitle`, 
+			`type`, 
+			`parent_id`, 
+			`level`, 
+			`m_pic`, 
+			`pc_pic`, 
+			`sort`, 
+			`is_class`, 
+			`is_show`, 
+			`index_show`, 
+			`open_type`, 
+			`create_date`
+		)
+		values
+		(
+			#{umId}, 
+			#{title}, 
+			#{subtitle}, 
+			#{type}, 
+			#{parentId}, 
+			#{level}, 
+			#{mPic}, 
+			#{pcPic}, 
+			#{sort}, 
+			#{isClass}, 
+			#{isShow}, 
+			#{indexShow}, 
+			#{openType}, 
+			#{createDate}
+		)
+	</insert>
+
+    <update id="update" parameterType="cn.cisdom.base.entity.ModelModuleEntity">
+        update tb_model_module
+        <set>
+            <if test="umId != null">`um_id` = #{umId},</if>
+            <if test="title != null">`title` = #{title},</if>
+            <if test="subtitle != null">`subtitle` = #{subtitle},</if>
+            <if test="type != null">`type` = #{type},</if>
+            <if test="parentId != null">`parent_id` = #{parentId},</if>
+            <if test="level != null">`level` = #{level},</if>
+            <if test="mPic != null">`m_pic` = #{mPic},</if>
+            <if test="pcPic != null">`pc_pic` = #{pcPic},</if>
+            <if test="sort != null">`sort` = #{sort},</if>
+            <if test="isClass != null">`is_class` = #{isClass},</if>
+            <if test="isShow != null">`is_show` = #{isShow},</if>
+            <if test="indexShow != null">`index_show` = #{indexShow},</if>
+            <if test="openType != null">`open_type` = #{openType},</if>
+            <if test="createDate != null">`create_date` = #{createDate}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from tb_model_module where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from tb_model_module where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

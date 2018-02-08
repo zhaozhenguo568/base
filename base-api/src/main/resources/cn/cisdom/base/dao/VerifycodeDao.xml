@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.cisdom.base.dao.VerifycodeDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="cn.cisdom.base.entity.VerifycodeEntity" id="verifycodeMap">
+        <result property="id" column="id"/>
+        <result property="mobile" column="mobile"/>
+        <result property="userId" column="user_id"/>
+        <result property="code" column="code"/>
+        <result property="type" column="type"/>
+        <result property="status" column="status"/>
+        <result property="ip" column="ip"/>
+        <result property="sendTime" column="send_time"/>
+        <result property="expireTime" column="expire_time"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="cn.cisdom.base.entity.VerifycodeEntity">
+		select id,mobile,code,`type`,status,send_time,expire_time from tb_verifycode where id = #{value}
+	</select>
+
+    <select id="queryList" resultType="cn.cisdom.base.entity.VerifycodeEntity">
+        select id,mobile,code,`type`,status,send_time,expire_time from tb_verifycode
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryValidList" resultType="cn.cisdom.base.entity.VerifycodeEntity">
+        select id,mobile,code,`type`,status,send_time,expire_time from tb_verifycode where status = '0' and `type` = #{type} and mobile = #{mobile} and (TO_SECONDS(now()) - TO_SECONDS(send_time)) <![CDATA[ < ]]> 60
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by expire_time desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(id) from tb_verifycode
+	</select>
+
+    <insert id="save" parameterType="cn.cisdom.base.entity.VerifycodeEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into tb_verifycode
+		(
+			`mobile`, 
+			`user_id`,
+			`code`,
+			`type`, 
+			`status`, 
+			`send_time`,
+			`ip`,
+			`expire_time`
+		)
+		values
+		(
+			#{mobile}, 
+			#{userId},
+			#{code},
+			#{type}, 
+			#{status}, 
+			#{sendTime},
+			#{ip},
+			#{expireTime}
+		)
+	</insert>
+
+    <update id="update" parameterType="cn.cisdom.base.entity.VerifycodeEntity">
+        update tb_verifycode
+        <set>
+            <if test="mobile != null">`mobile` = #{mobile},</if>
+            <if test="userId != null">`user_id` = #{userId},</if>
+            <if test="code != null">`user_id` = #{code},</if>
+            <if test="type != null">`type` = #{type},</if>
+            <if test="status != null">`status` = #{status},</if>
+            <if test="sendTime != null">`send_time` = #{sendTime},</if>
+            <if test="ip != null">`send_time` = #{ip},</if>
+            <if test="expireTime != null">`expire_time` = #{expireTime}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from tb_verifycode where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from tb_verifycode where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="queryByMobile" resultType="cn.cisdom.base.entity.VerifycodeEntity">
+		select id,mobile,code,`type`,status,send_time,expire_time from tb_verifycode where mobile = #{value}
+	</select>
+
+</mapper>
